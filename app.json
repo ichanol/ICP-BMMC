@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "demo",
+    "description": "BMMC",
+    "slug": "parkingdemowithfirebase",
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ff9700"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.yourappname"
+    },
+    "android": {
+      "package": "com.yourcompany.yourappname",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD2ul-3ZNcWDgyhMGoGQjVP4p1dtezjJ0o"
+        }
+      }
+    }
+  }
+}
