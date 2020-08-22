@@ -11,38 +11,108 @@ import {
 import Constants from "expo-constants";
 import Validation from "./Validation";
 
+import SelectLocation from "../info/SelectLocation";
+import InformationPanel from "../info/InformationPanel";
+import ParkingRules from "../info/ParkingRules";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Instruction = () => {
   let moveX = useRef(null);
-  let scrollX = useRef(new Animated.Value(0)).current;
+  const [activePage, setActivePage] = useState(0);
 
-  let counter = 0;
   const dot = ["1", "2", "3", "4"];
+
   const NextPage = () => {
-    if (counter >= 0 && counter <= dot.length - 2) {
-      counter++;
-      let value = windowWidth * counter;
-      moveX.scrollTo({ x: value, y: 0, animated: true });
-      console.log(counter);
-    } else {
-    }
+    let value = windowWidth * (activePage + 1);
+    moveX.scrollTo({ x: value, y: 0, animated: true });
   };
 
   const PreviousPage = () => {
-    if (counter > 0 && counter <= dot.length - 1) {
-      counter--;
-      let value = windowWidth * counter;
-      moveX.scrollTo({ x: value, y: 0, animated: true });
-      console.log(counter);
-    } else {
-    }
+    let value = windowWidth * (activePage - 1);
+    moveX.scrollTo({ x: value, y: 0, animated: true });
   };
 
   return (
     <View style={styles.container}>
-      
+      <View style={{ ...styles.nav }}>
+        <View
+          style={{
+            position: "relative",
+            flexDirection: "row",
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {activePage === 0 ? null : (
+            <View style={{ position: "absolute", zIndex: 5, left: 20 }}>
+              <TouchableOpacity
+                onPress={PreviousPage}
+                style={{
+                  width: 60,
+                  height: 40,
+                  borderRadius: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(255,255,255,0.5)",
+                }}
+              >
+                <Text>Prev</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          <View style={{ flexDirection: "row" }}>
+            {dot.map((item, key) => {
+              return (
+                <View
+                  key={key}
+                  style={{
+                    backgroundColor:
+                      key == activePage ? "white" : "rgba(255,255,255,0.5)",
+                    width: 10,
+                    height: 10,
+                    borderRadius: 10,
+                    marginHorizontal: 10,
+                  }}
+                ></View>
+              );
+            })}
+          </View>
+          {activePage === 3 ? null : (
+            <View
+              style={{
+                position: "absolute",
+                right: 20,
+                zIndex: 5,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  borderRadius: 8,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(255,255,255,0.5)",
+                }}
+                onPress={NextPage}
+              >
+                <Text
+                  style={{
+                    width: 60,
+                    height: 40,
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                  }}
+                >
+                  Next
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
       <ScrollView
         horizontal={true}
         pagingEnabled={true}
@@ -51,24 +121,24 @@ const Instruction = () => {
         ref={(ref) => {
           moveX = ref;
         }}
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              contentOffset: {
-                x: scrollX,
-              },
-            },
-          },
-        ])}
+        onScroll={({ nativeEvent }) => {
+          const slide = Math.floor(
+            nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width
+          );
+          console.log(slide);
+          if (slide !== activePage) {
+            setActivePage(slide);
+          }
+        }}
       >
         <View style={styles.page1}>
-          <Text style={styles.num}>Instruction 1</Text>
+          <SelectLocation></SelectLocation>
         </View>
         <View style={styles.page2}>
-          <Text style={styles.num}>Instruction 2</Text>
+          <InformationPanel></InformationPanel>
         </View>
         <View style={styles.page3}>
-          <Text style={styles.num}>Instruction 3</Text>
+          <ParkingRules></ParkingRules>
         </View>
         <View>
           <Validation width={windowWidth}></Validation>
@@ -82,41 +152,40 @@ export default Instruction;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
   },
   page1: {
-    backgroundColor: "#142850",
+    backgroundColor: "#ff9700",
     flex: 1,
     width: windowWidth,
     justifyContent: "center",
     alignItems: "center",
   },
   page2: {
-    backgroundColor: "#27496d",
+    backgroundColor: "#ff9700",
     flex: 1,
     width: windowWidth,
     justifyContent: "center",
     alignItems: "center",
   },
   page3: {
-    backgroundColor: "#0c7b93",
+    backgroundColor: "#ff9700",
     flex: 1,
     width: windowWidth,
     justifyContent: "center",
     alignItems: "center",
   },
   page4: {
-    backgroundColor: "#00a8cc",
+    backgroundColor: "#ff9700",
     flex: 1,
     width: windowWidth,
   },
   nav: {
     zIndex: 1,
     position: "absolute",
-    flexDirection: "row-reverse",
-    justifyContent: "space-around",
-    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
     bottom: 30,
+    width: "100%",
   },
   nextText: {
     alignItems: "center",

@@ -2,7 +2,6 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
-  TransitionPresets,
   CardStyleInterpolators,
 } from "@react-navigation/stack";
 
@@ -16,11 +15,6 @@ import NavBar from "./source/screen/NavBar";
 import Preferences from "./source/screen/Preferences";
 import Route from "./source/screen/Route";
 import ProfileSettings from "./source/screen/ProfileSettings";
-import MapSettings from "./source/screen/MapSettings";
-import ThemeSettings from "./source/screen/ThemeSettings";
-
-import Animationtest from "./source/screen/Animationtest.js"
-
 enableScreens();
 const Stack = createStackNavigator();
 
@@ -42,7 +36,6 @@ function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="INS" component={Instruction} />
-        <Stack.Screen name="Anim" component={Animationtest} />
         <Stack.Screen
           name="Validate"
           component={Validation}
@@ -66,16 +59,6 @@ function App() {
         <Stack.Screen
           name="profile"
           component={ProfileSettings}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="mapsettings"
-          component={MapSettings}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="theme"
-          component={ThemeSettings}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

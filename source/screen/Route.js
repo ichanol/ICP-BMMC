@@ -1,33 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { AsyncStorage } from "react-native";
-import NavBar from "./NavBar";
-import Instruction from "./Instruction";
+import React, { useState, useEffect } from 'react'
+import { AsyncStorage } from 'react-native'
+import NavBar from './NavBar'
+import Instruction from './Instruction'
 
 const Route = () => {
-  let [reg, setReg] = useState(true);
+  let [reg, setReg] = useState(null)
 
   const CheckReg = async () => {
     try {
-      const userValue = await AsyncStorage.getItem("user");
+      const userValue = await AsyncStorage.getItem('user')
       if (userValue !== null) {
-        setReg(true);
+        setReg(true)
       } else {
-        setReg(false);
+        setReg(false)
       }
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
-
+  }
   const Cond = () => {
-    return reg? <NavBar></NavBar>:<Instruction></Instruction>;
-  };
-
+    switch (reg) {
+      case null:
+        return null
+      case true:
+        return <NavBar />
+      case false:
+        return <Instruction />
+      default:
+        return null
+    }
+  }
   useEffect(() => {
-    CheckReg();
-    Cond();
-  }, []);
+    CheckReg()
+    Cond()
+  }, [])
 
-  return <Cond></Cond>;
-};
-export default Route;
+  return <Cond />
+}
+export default Route

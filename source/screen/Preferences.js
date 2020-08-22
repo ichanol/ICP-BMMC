@@ -9,13 +9,12 @@ import {
   TouchableHighlight,
   SectionList,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import { useNavigation } from "@react-navigation/native";
 
 import User from "../icon/User";
-import MapLayer from "../icon/MapLayer";
 import ChevronRight from "../icon/ChevronRight";
-import Theme from "../icon/Theme";
 import { Variable, ui_theme } from "./Variable";
 
 const windowWidth = Dimensions.get("window").width;
@@ -23,30 +22,15 @@ const windowHeight = Dimensions.get("window").height;
 
 const Light = true;
 
-
 const Preferences = () => {
   const navigation = useNavigation();
   const [profile, setProfile] = useState(null);
-  const [mapstyle, setMaptype] = useState(null);
-  const [theme, setTheme] = useState(null);
-  //const [Light, setLightTheme] = useState(null);
 
   const CurrentSettings = async () => {
     try {
       const userValue = await AsyncStorage.getItem("user");
-      const mapValue = await AsyncStorage.getItem("maptype");
-      const themeValue = await AsyncStorage.getItem("theme");
-      if (userValue !== null && mapValue !== null && themeValue !== null) {
-        const newMapValue =
-          mapValue.charAt(0).toUpperCase() + mapValue.slice(1);
+      if (userValue !== null) {
         setProfile(userValue);
-        setMaptype(newMapValue);
-        setTheme(themeValue + " Theme");
-        if (themeValue == "Light") {
-          //setLightTheme(true);
-        } else {
-          //setLightTheme(false);
-        }
       } else {
         console.log("No data");
       }
@@ -54,7 +38,6 @@ const Preferences = () => {
       console.log(err);
     }
   };
-
   const ClearUserData = async () => {
     try {
       await AsyncStorage.clear();
@@ -62,7 +45,6 @@ const Preferences = () => {
       console.log(err);
     }
   };
-
   const Rendermenu = ({ list, index }) => {
     return (
       <TouchableHighlight
@@ -121,7 +103,6 @@ const Preferences = () => {
       </TouchableHighlight>
     );
   };
-
   useEffect(() => {
     CurrentSettings();
     const unsubscribe = navigation.addListener("focus", () => {
@@ -130,7 +111,6 @@ const Preferences = () => {
     });
     return unsubscribe;
   }, []);
-
   const DATA = [
     {
       title: "User",
@@ -145,27 +125,6 @@ const Preferences = () => {
         },
       ],
     },
-    {
-      title: "Appearance",
-      data: [
-        {
-          name: "Map",
-          comp: <MapLayer mode={Light}></MapLayer>,
-          action: () => {
-            navigation.navigate("mapsettings");
-          },
-          current: mapstyle,
-        },
-        /* {
-          name: "Theme",
-          comp: <Theme mode={Light}></Theme>,
-          action: () => {
-            navigation.navigate("theme");
-          },
-          current: theme,
-        }, */
-      ],
-    },
   ];
 
   return (
@@ -177,6 +136,12 @@ const Preferences = () => {
           : ui_theme.Dark.mainBackgroundColor,
       }}
     >
+      <StatusBar
+        style={"dark"}
+        translucent={false}
+        backgroundColor="#ff9700"
+      ></StatusBar>
+
       <View
         style={{
           ...styles.header,
@@ -244,23 +209,6 @@ const Preferences = () => {
             <Text style={{ color: "white" }}>Clear User Data</Text>
           </View>
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Anim");
-          }}
-          style={{
-            height: 50,
-            backgroundColor: "black",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 30,
-            zIndex: 1,
-          }}
-        >
-          <View>
-            <Text style={{ color: "white" }}>Animationtest</Text>
-          </View>
-        </TouchableOpacity> */}
 
         <View style={styles.footer}>
           <Text
@@ -283,10 +231,9 @@ export default Preferences;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
   },
   header: {
-    height: windowHeight / 13,
+    height: 50,
     shadowColor: "black",
     shadowOpacity: 0.2,
     shadowOffset: { width: 2, height: 2 },
@@ -299,11 +246,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   body: {
-    height:
-      windowHeight -
-      windowHeight / 13 -
-      Constants.statusBarHeight -
-      windowHeight / 13,
+    height: windowHeight - 50 - Constants.statusBarHeight - 50,
     paddingVertical: 10,
   },
   menu: {

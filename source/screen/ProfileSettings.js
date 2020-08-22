@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import { StackActions, useNavigation } from "@react-navigation/native";
 
@@ -52,7 +53,6 @@ const ProfileSettings = () => {
       console.log(err);
     }
   };
-
   const saveOfficer = async () => {
     try {
       await AsyncStorage.setItem("user", "Officer");
@@ -63,7 +63,6 @@ const ProfileSettings = () => {
       console.log(err);
     }
   };
-
   const saveStudent = async () => {
     try {
       await AsyncStorage.setItem("user", "Student");
@@ -74,11 +73,9 @@ const ProfileSettings = () => {
       console.log(err);
     }
   };
-
   useEffect(() => {
     CheckUser();
   }, []);
-
   const IsStudent = () => {
     return student ? (
       <CheckSymbol style={{ position: "absolute", right: 15 }}></CheckSymbol>
@@ -86,7 +83,6 @@ const ProfileSettings = () => {
       <View style={{ width: 30, height: 30 }}></View>
     );
   };
-
   const IsOfficer = () => {
     return officer ? (
       <CheckSymbol style={{ position: "absolute", right: 15 }}></CheckSymbol>
@@ -94,7 +90,6 @@ const ProfileSettings = () => {
       <View style={{ width: 30, height: 30 }}></View>
     );
   };
-
   const user_choices = [
     { FN: saveOfficer, text: "Officer", checkcomp: <IsOfficer></IsOfficer> },
     { FN: saveStudent, text: "Student", checkcomp: <IsStudent></IsStudent> },
@@ -102,6 +97,12 @@ const ProfileSettings = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        style={"dark"}
+        translucent={false}
+        backgroundColor="#ff9700"
+      ></StatusBar>
+
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -144,12 +145,16 @@ export default ProfileSettings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
-    backgroundColor: mode ? ui_theme.Light.mainBackgroundColor: ui_theme.Dark.mainBackgroundColor,
+    //marginTop: Constants.statusBarHeight,
+    backgroundColor: mode
+      ? ui_theme.Light.mainBackgroundColor
+      : ui_theme.Dark.mainBackgroundColor,
   },
   header: {
-    height: windowHeight / 13,
-    backgroundColor: mode ? ui_theme.Light.menuBackgroundColor: ui_theme.Dark.menuBackgroundColor,
+    height: 50,
+    backgroundColor: mode
+      ? ui_theme.Light.menuBackgroundColor
+      : ui_theme.Dark.menuBackgroundColor,
     shadowColor: "black",
     shadowOpacity: 0.2,
     shadowOffset: { width: 2, height: 2 },
@@ -159,27 +164,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headertext: {
-    color: mode ? ui_theme.Light.headerTextColor: ui_theme.Dark.headerTextColor,
+    color: mode
+      ? ui_theme.Light.headerTextColor
+      : ui_theme.Dark.headerTextColor,
     fontWeight: "600",
     fontSize: 22,
     marginLeft: 30,
   },
   body: {
     height: windowHeight - windowHeight / 13 - Constants.statusBarHeight,
-    backgroundColor: mode ? ui_theme.Light.overlay:ui_theme.Dark.overlay,
+    backgroundColor: mode ? ui_theme.Light.overlay : ui_theme.Dark.overlay,
     paddingVertical: 15,
   },
   topictext: {
     paddingLeft: 20,
     paddingVertical: 10,
     fontSize: 16,
-    color: mode ? ui_theme.Light.headerTextColor:ui_theme.Dark.headerTextColor,
+    color: mode
+      ? ui_theme.Light.headerTextColor
+      : ui_theme.Dark.headerTextColor,
   },
   menu: {
-    backgroundColor: mode ? ui_theme.Light.menuBackgroundColor:ui_theme.Dark.menuBackgroundColor,
+    backgroundColor: mode
+      ? ui_theme.Light.menuBackgroundColor
+      : ui_theme.Dark.menuBackgroundColor,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    borderBottomColor: mode?ui_theme.Light.borderBottomColor:ui_theme.Dark.borderBottomColor,
+    borderBottomColor: mode
+      ? ui_theme.Light.borderBottomColor
+      : ui_theme.Dark.borderBottomColor,
     borderBottomWidth: 1,
     borderStyle: "solid",
     flexDirection: "row",
@@ -193,7 +206,9 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
     fontSize: 16,
     fontWeight: "600",
-    color: mode ? ui_theme.Light.headerTextColor:ui_theme.Dark.headerTextColor,
+    color: mode
+      ? ui_theme.Light.headerTextColor
+      : ui_theme.Dark.headerTextColor,
   },
   footer: {
     alignItems: "center",
@@ -202,8 +217,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: Constants.statusBarHeight - 10,
   },
-  footertext: { 
-    color: mode? ui_theme.Light.footerText: ui_theme.Dark.footerText,
-    fontSize: 12 
+  footertext: {
+    color: mode ? ui_theme.Light.footerText : ui_theme.Dark.footerText,
+    fontSize: 12,
   },
 });

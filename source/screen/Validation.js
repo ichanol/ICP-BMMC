@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -7,56 +7,29 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, StackActions } from "@react-navigation/native";
+
 const Validation = (props) => {
-  //saveOfficer, saveStudent จะเก็บการตั้งค่าว่าผู้ใช้เป็นuserประเภทไหนในครั้งแรกที่ใช้งานแอปพลิเคชั่น
-  //ครั้งต่อๆไปที่เปิดใช้งานจะได้ไม่ต้องถามอีก
   const navigation = useNavigation();
   const saveOfficer = async () => {
     try {
       await AsyncStorage.setItem("user", "Officer");
-      await AsyncStorage.setItem("theme", "Light");
-      await AsyncStorage.setItem("maptype", "satellite");
-      await AsyncStorage.setItem("mapstyle", "DEFAULT");
-      navigation.navigate("NAV");
+      navigation.dispatch(StackActions.replace("NAV"));
     } catch (err) {
       console.log(err);
     }
   };
-
   const saveStudent = async () => {
     try {
       await AsyncStorage.setItem("user", "Student");
-      await AsyncStorage.setItem("theme", "Light");
-      await AsyncStorage.setItem("maptype", "satellite");
-      await AsyncStorage.setItem("mapstyle", "DEFAULT");
-      navigation.navigate("NAV");
+      navigation.dispatch(StackActions.replace("NAV"));
     } catch (err) {
       console.log(err);
     }
   };
-  const CheckReg = async () => {
-    try {
-      const userValue = await AsyncStorage.getItem("user");
-      if (userValue !== null) {
-      } else {
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    CheckReg();
-  }, []);
-
-  //บรรทัดล่างใช้ส่งข้อมูลไปหน้าอื่นๆ
-  //props.navigation.navigate("NAV", {user: "officer",});
-  //ใช้บรรทัดล่างในการรับค่าในหน้าอื่น
-  //  const check = props.route.params.user;
 
   return (
-    <View style={[styles.container,{width:props.width}]}>
+    <View style={[styles.container, { width: props.width }]}>
       <View style={styles.top}></View>
 
       <View style={styles.center}>
@@ -90,7 +63,7 @@ const Validation = (props) => {
       </View>
 
       <View style={styles.bottom}>
-        <Text style={styles.bottomtext}>Powered by Bangmod Maker Club</Text>
+        <Text style={styles.bottomtext}></Text>
       </View>
     </View>
   );
@@ -99,9 +72,8 @@ export default Validation;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,/* 
-    marginTop: Constants.statusBarHeight, */
-    backgroundColor: "#ff7300",
+    flex: 1,
+    backgroundColor: "#ff9700",
   },
   top: {
     flex: 0.25,
@@ -116,8 +88,8 @@ const styles = StyleSheet.create({
   },
   headertext: {
     color: "white",
-    fontSize: 20,
-    fontWeight: "500",
+    fontSize: 32,
+    fontWeight: "bold",
   },
   choices: {
     flex: 1,
@@ -135,7 +107,7 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontWeight: "500",
-    fontSize: 25,
+    fontSize: 27,
     fontFamily: "",
     marginTop: 20,
   },

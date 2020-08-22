@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableWithoutFeedback,
   StyleSheet,
   Dimensions,
-  AsyncStorage,
 } from "react-native";
 import Settings from "../icon/Settings";
 import Map from "../icon/Map";
 import MapLayout from "../screen/MapLayout";
 import Preferences from "../screen/Preferences";
-import Constants from "expo-constants";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -29,7 +27,6 @@ const NavBar = (props) => {
       return <Preferences></Preferences>;
     }
   };
-
   const MapHandler = () => {
     setMapActive(true);
     setSettingsActive(false);
@@ -38,6 +35,7 @@ const NavBar = (props) => {
     setMapActive(false);
     setSettingsActive(true);
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.navcontainer}>
@@ -49,6 +47,7 @@ const NavBar = (props) => {
             }}
           >
             <Map active={isMapActive}></Map>
+            <Text style={styles.tabMenuText}>Car Park</Text>
           </View>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={SettingsHandler}>
@@ -59,12 +58,12 @@ const NavBar = (props) => {
             }}
           >
             <Settings active={isSettingsActive}></Settings>
+            <Text style={styles.tabMenuText}>Setting</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>
 
       <Cond></Cond>
-      
     </View>
   );
 };
@@ -78,16 +77,17 @@ const styles = StyleSheet.create({
   },
   navcontainer: {
     zIndex: 1,
-    //position: "absolute",
-    //bottom: 0,
     backgroundColor: "white",
     justifyContent: "center",
-    height: windowHeight / 13,
+    height: 50,
     flexDirection: "row",
   },
   section: {
+    paddingVertical: 10,
     width: windowWidth / 2,
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "row",
   },
+  tabMenuText: { fontSize: 14, marginLeft: 10 },
 });
