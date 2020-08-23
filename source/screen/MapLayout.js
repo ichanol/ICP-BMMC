@@ -18,6 +18,7 @@ import MapView, {
   Callout,
 } from "react-native-maps";
 import { BarIndicator } from "react-native-indicators";
+import getDirections from "react-native-google-maps-directions";
 
 import Refresh from "../icon/Refresh";
 import Mappin from "../icon/Mappin";
@@ -30,9 +31,12 @@ const windowHeight = Dimensions.get("window").height;
 
 const MapLayout = () => {
   var mapRef = useRef();
+  var markerRef = useRef([]);
+
   var parkingLotsData;
   const startTime = Date.now();
 
+  const [userLatLong, setUserLatLong] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refresh, setRefresh] = useState(true);
   const [refreshTime, setRefreshTime] = useState("");
@@ -54,10 +58,16 @@ const MapLayout = () => {
   const scaleInformationValue = new Animated.Value(1);
 
   const getUserLocation = async () => {
-    const { status } = Permissions.askAsync(Permissions.LOCATION);
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === "granted") {
       const userLocation = await Location.getCurrentPositionAsync();
-      console.log(userLocation);
+      const latlong = {
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
+      };
+      return latlong;
+    } else {
+      getUserLocation();
     }
   };
   const Region = {
@@ -234,8 +244,11 @@ const MapLayout = () => {
     }
   };
   useEffect(() => {
+    console.log(markerRef.current);
     setIsLoading(true);
-    getUserLocation();
+    (async () => {
+      setUserLatLong(await getUserLocation());
+    })();
     fetchData();
     console.log("Welocome!");
     const TIMER = setInterval(TimerFN, 10000);
@@ -243,7 +256,7 @@ const MapLayout = () => {
       clearInterval(TIMER);
       console.log("UNMOUNTED");
     };
-  }, [refresh]);
+  }, [refresh, markerRef]);
   const latlongGenerator = (
     refLot,
     numberPerRow,
@@ -345,6 +358,27 @@ const MapLayout = () => {
       );
     });
   };
+  const navigateToMaps = async (latlong) => {
+    const userLocation = await getUserLocation();
+    const data = {
+      source: {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+      },
+      destination: {
+        latitude: latlong.latitude,
+        longitude: latlong.longitude,
+      },
+      params: [
+        {
+          key: "travelmode",
+          value: "driving",
+        },
+      ],
+    };
+    getDirections(data);
+    setUserLatLong(userLocation);
+  };
   const indicatorInfomation = [
     { color: "#00cc77", Text: "Available" },
     { color: "#fa0055", Text: "Not Available" },
@@ -411,7 +445,7 @@ const MapLayout = () => {
   const markerInfomation = [
     {
       title: "FIBO",
-      description: "FIBO PARKING",
+      description: "Go to FIBO parking",
       coordinate: {
         latitude: 13.654998926783339,
         longitude: 100.49456555396318,
@@ -419,7 +453,7 @@ const MapLayout = () => {
     },
     {
       title: "CB4",
-      description: "CB4 PARKING",
+      description: "Go to CB4 parking",
       coordinate: {
         latitude: 13.649213,
         longitude: 100.492737,
@@ -427,7 +461,7 @@ const MapLayout = () => {
     },
     {
       title: "D'oro",
-      description: "D'oro PARKING",
+      description: "Go to D'oro parking",
       coordinate: {
         latitude: 13.650266,
         longitude: 100.495715,
@@ -435,7 +469,7 @@ const MapLayout = () => {
     },
     {
       title: "CB1",
-      description: "CB1 PARKING",
+      description: "Go to CB1 parking",
       coordinate: {
         latitude: 13.651008,
         longitude: 100.493298,
@@ -493,7 +527,7 @@ const MapLayout = () => {
     );
   };
   const UserLocationButton = () => {
-    const userLocationAction = () => {
+    const userLocationAction = async () => {
       Animated.sequence([
         Animated.timing(scaleUserLocationValue, {
           toValue: 1.2,
@@ -506,14 +540,15 @@ const MapLayout = () => {
           useNativeDriver: false,
         }),
       ]).start(async () => {
-        const currentLocation = await Location.getCurrentPositionAsync();
+        const currentLocation = await getUserLocation();
         const latlongObj = {
-          latitude: currentLocation.coords.latitude,
-          longitude: currentLocation.coords.longitude,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
           latitudeDelta: 0.0014,
           longitudeDelta: 0.0014,
         };
         mapRef.animateToRegion(latlongObj, 1500);
+        setUserLatLong(currentLocation);
       });
     };
     return (
@@ -716,6 +751,7 @@ const MapLayout = () => {
                   underlayColor="rgba(0,0,0,0.2)"
                   onPress={() => {
                     mapRef.animateToRegion(element.latlong, 1500);
+                    console.log(markerRef.current[key].showCallout());
                     setShowCarParkPicker(false);
                     setCarParkTitle(element.name);
                   }}
@@ -756,17 +792,20 @@ const MapLayout = () => {
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
                 เวลาทำการ:
               </Text>
-              <Text style={{ fontSize: 16 }}>
+              <Text style={{ fontSize: 16, marginTop: 10 }}>
                 จันทร์ - ศุกร์ (05.00 - 22.00 น.)
               </Text>
-              <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 10 }}>
-                กฎการจอด:
+              <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 15 }}>
+                กฎการใช้ที่จอดรถยนต์:
               </Text>
-              <Text style={{ fontSize: 16 }}>
-                สติ้กเกอร์ สีแดง : บุคลากร {"\n"}สีเหลือง : นักศึกษา{"\n"}
-                บุคคลภายนอกไม่ให้จอด ถ้ามาจอดโดยไม่มีสติ๊กเกอร์
-                จะโดนจดเลขทะเบียน + ตักเตือน - ถ้าตักเตือน 3 ครั้งโดนล็อคล้อ +
-                ปรับ 400 บาท
+              <Text style={{ fontSize: 16, marginTop: 10 }}>
+                1.
+                เฉพาะผู้ที่มีสติ๊กเกอร์ที่จอดรถยนต์สำหรับบุคลากร(สีแดง)และนักศึกษา(สีเหลือง)เท่านั้นจึงจะสามารถเข้าใช้งานได้
+              </Text>
+              <Text style={{ fontSize: 16, marginTop: 10 }}>
+                2.บุคคลภายนอกไม่สามารถนำรถยนต์เข้ามาจอดในบริเวณดังกล่าว
+                หากฝ่าฝืนเจ้าหน้าที่จะตักเตือนและบันทึกทะเบียนรถยนต์
+                หากฝ่านฝืนครบ 3 ครั้ง จะถูกล็อกล้อและเสียค่าปรับ 400 บาท
               </Text>
             </View>
           </View>
@@ -809,8 +848,9 @@ const MapLayout = () => {
               key={key}
               title={element.title}
               coordinate={element.coordinate}
+              ref={(ref) => (markerRef.current[key] = ref)}
             >
-              <Callout>
+              <Callout onPress={() => navigateToMaps(element.coordinate)}>
                 <Text>{element.description}</Text>
               </Callout>
             </Marker>

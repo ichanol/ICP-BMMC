@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "yellow",
     position: "absolute",
     zIndex: 1,
-    top: 60,
+    top: 20,
     alignSelf: "center",
     height: 160,
   },
@@ -155,7 +155,7 @@ export const styles = StyleSheet.create({
   infocontainer: {
     left: 20,
     right: 20,
-    top: 230,
+    bottom: 2 * Constants.statusBarHeight + windowHeight / 12,
     backgroundColor: "white",
     position: "absolute",
     shadowColor: "black",

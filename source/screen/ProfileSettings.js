@@ -100,7 +100,7 @@ const ProfileSettings = () => {
       <StatusBar
         style={"dark"}
         translucent={false}
-        backgroundColor="#ff9700"
+        backgroundColor="yellow"
       ></StatusBar>
 
       <View style={styles.header}>
