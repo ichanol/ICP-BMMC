@@ -35,7 +35,7 @@
       "package": "com.yourcompany.yourappname",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyD2ul-3ZNcWDgyhMGoGQjVP4p1dtezjJ0o"
+          "apiKey": ""
         }
       }
     },
