@@ -62,7 +62,6 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalcontainer: {
-    paddingVertical: 20,
     left: 20,
     right: 20,
     bottom: 2 * Constants.statusBarHeight + windowHeight / 12,
@@ -75,10 +74,12 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     zIndex: 1,
+    overflow: "hidden",
   },
   modaltextheader: {
-    paddingVertical: 10,
-    fontSize: 18,
+    paddingVertical: 20,
+    fontSize: 20,
+    fontWeight: "bold",
   },
   modalchoicescontainer: {
     flexDirection: "column",
@@ -88,7 +89,27 @@ export const styles = StyleSheet.create({
   modalchoice: {
     paddingVertical: 10,
     width: "100%",
+    justifyContent: "center",
     alignItems: "center",
+    borderStyle: "solid",
+    borderColor: "rgba(0,0,0,0.25)",
+    borderWidth: 0.5,
+  },
+  parkingChoices: {
+    width: "30%",
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "rgba(0,0,0,0.7)",
+  },
+  parkingAvailable: {
+    width: "30%",
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  choiceWrapper: {
+    flexDirection: "row",
   },
   lastupdatetime: {
     position: "absolute",
@@ -132,7 +153,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   infocontainer: {
-    paddingVertical: 20,
     left: 20,
     right: 20,
     top: 230,
@@ -157,7 +177,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 6,
   },
-  availableInformation: { fontSize: 80, fontWeight: "bold", color: "lime" },
+  availableInformation: { fontSize: 80, fontWeight: "bold", color: "#00cc77" },
   informationSVGIcon: {
     position: "absolute",
     right: 10,

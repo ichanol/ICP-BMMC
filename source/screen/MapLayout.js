@@ -21,6 +21,7 @@ import { BarIndicator } from "react-native-indicators";
 
 import Refresh from "../icon/Refresh";
 import Mappin from "../icon/Mappin";
+import UserLocation from "../icon/UserLocation";
 import Information from "../icon/Information";
 import { styles } from "./MapLayoutStyle";
 
@@ -49,12 +50,14 @@ const MapLayout = () => {
 
   const scaleRefreshValue = new Animated.Value(1);
   const scaleSelectLocationValue = new Animated.Value(1);
+  const scaleUserLocationValue = new Animated.Value(1);
   const scaleInformationValue = new Animated.Value(1);
 
   const getUserLocation = async () => {
     const { status } = Permissions.askAsync(Permissions.LOCATION);
-    if (status == "granted") {
+    if (status === "granted") {
       const userLocation = await Location.getCurrentPositionAsync();
+      console.log(userLocation);
     }
   };
   const Region = {
@@ -78,9 +81,9 @@ const MapLayout = () => {
     ],
     id2xx_2: [
       { name: 1, latitude: 13.654899, longitude: 100.494227, status: "" }, //Y,X
-      { name: 2, latitude: 13.6548905, longitude: 100.4942476 },           //1-2=>-85 ,1-2=>+206
-      { name: 3, latitude: 13.6548535, longitude: 100.4942306 },           //2-3=>-370, 2-3=>-170
-      { name: 4, latitude: 13.654862, longitude: 100.49421 },              //3-4=>+85, -206
+      { name: 2, latitude: 13.6548905, longitude: 100.4942476 }, //1-2=>-85 ,1-2=>+206
+      { name: 3, latitude: 13.6548535, longitude: 100.4942306 }, //2-3=>-370, 2-3=>-170
+      { name: 4, latitude: 13.654862, longitude: 100.49421 }, //3-4=>+85, -206
     ],
     id3xx: [
       { name: 1, latitude: 13.6550342, longitude: 100.4942861, status: "" },
@@ -315,7 +318,7 @@ const MapLayout = () => {
       let colorbackground, stroke;
       switch (slot[0].status) {
         case "0":
-          colorbackground = "rgba(0,255,0,1)";
+          colorbackground = "lime";
           stroke = "white";
           break;
         case "1":
@@ -343,8 +346,8 @@ const MapLayout = () => {
     });
   };
   const indicatorInfomation = [
-    { color: "rgba(0,255,0,1)", Text: "Available" },
-    { color: "red", Text: "Not Available" },
+    { color: "#00cc77", Text: "Available" },
+    { color: "#fa0055", Text: "Not Available" },
     { color: "rgba(50,60,150,1)", Text: "Normal Slot" },
   ];
   const locationInfomation = [
@@ -356,6 +359,11 @@ const MapLayout = () => {
         latitudeDelta: 0.0014,
         longitudeDelta: 0.0014,
       },
+      time: {
+        open: 5,
+        close: 22,
+      },
+      available: currentAvailable,
     },
     {
       name: "CB4",
@@ -365,6 +373,11 @@ const MapLayout = () => {
         latitudeDelta: 0.0014,
         longitudeDelta: 0.0014,
       },
+      time: {
+        open: 5,
+        close: 22,
+      },
+      available: null,
     },
     {
       name: "D'oro",
@@ -374,6 +387,11 @@ const MapLayout = () => {
         latitudeDelta: 0.0014,
         longitudeDelta: 0.0014,
       },
+      time: {
+        open: 5,
+        close: 22,
+      },
+      available: null,
     },
     {
       name: "CB1",
@@ -383,6 +401,11 @@ const MapLayout = () => {
         latitudeDelta: 0.0014,
         longitudeDelta: 0.0014,
       },
+      time: {
+        open: 5,
+        close: 22,
+      },
+      available: null,
     },
   ];
   const markerInfomation = [
@@ -424,8 +447,8 @@ const MapLayout = () => {
     { latitude: 13.654165856009751, longitude: 100.49454040825366 }, //ขวาล่าง
     { latitude: 13.654241115946348, longitude: 100.49455616623163 }, //ขวาบน
     { latitude: 13.654235251536564, longitude: 100.49458164721727 }, //ขวา
-    { latitude: 13.65428933442123, longitude: 100.49455180764198 },  //กลาง
-    { latitude: 13.654253170565985, longitude: 100.4945008456707 },  //ซ้าย
+    { latitude: 13.65428933442123, longitude: 100.49455180764198 }, //กลาง
+    { latitude: 13.654253170565985, longitude: 100.4945008456707 }, //ซ้าย
     { latitude: 13.654248283558099, longitude: 100.49452699720861 }, //ซ้ายบน
   ];
   const FIBO_arrow2 = [
@@ -465,6 +488,43 @@ const MapLayout = () => {
       >
         <TouchableOpacity onPress={refreshAction}>
           <Refresh />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+  const UserLocationButton = () => {
+    const userLocationAction = () => {
+      Animated.sequence([
+        Animated.timing(scaleUserLocationValue, {
+          toValue: 1.2,
+          duration: 100,
+          useNativeDriver: false,
+        }),
+        Animated.timing(scaleUserLocationValue, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start(async () => {
+        const currentLocation = await Location.getCurrentPositionAsync();
+        const latlongObj = {
+          latitude: currentLocation.coords.latitude,
+          longitude: currentLocation.coords.longitude,
+          latitudeDelta: 0.0014,
+          longitudeDelta: 0.0014,
+        };
+        mapRef.animateToRegion(latlongObj, 1500);
+      });
+    };
+    return (
+      <Animated.View
+        style={{
+          ...styles.floatbutton,
+          transform: [{ scale: scaleUserLocationValue }],
+        }}
+      >
+        <TouchableOpacity onPress={userLocationAction}>
+          <UserLocation />
         </TouchableOpacity>
       </Animated.View>
     );
@@ -567,7 +627,8 @@ const MapLayout = () => {
       <StatusBar
         style={"dark"}
         translucent={false}
-        backgroundColor="#ff9700"
+        //backgroundColor="#ff9700"
+        backgroundColor="yellow"
       ></StatusBar>
 
       {isLoading && (
@@ -580,6 +641,7 @@ const MapLayout = () => {
       <View style={styles.floatbuttoncontainer}>
         <RefreshButton />
         <SelectLocationButton />
+        <UserLocationButton />
       </View>
       <InformationPanel />
 
@@ -605,6 +667,47 @@ const MapLayout = () => {
           <Text style={styles.modaltextheader}>Select Parking Area</Text>
           <View style={styles.modalchoicescontainer}>
             {locationInfomation.map((element, key) => {
+              const isOpen = () => {
+                const time =
+                  new Date().getHours() * 100 +
+                  new Date(startTime).getMinutes();
+                if (
+                  time >= element.time.open * 100 &&
+                  time <= element.time.close * 100
+                ) {
+                  return element.available === null ? (
+                    <Text
+                      style={{
+                        ...styles.parkingAvailable,
+                        color: "rgba(0,0,0,0.3)",
+                      }}
+                    >
+                      Not Available
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        ...styles.parkingAvailable,
+                        color: "#00cc77",
+                      }}
+                    >
+                      {element.available}
+                    </Text>
+                  );
+                } else {
+                  return (
+                    <Text
+                      style={{
+                        ...styles.parkingAvailable,
+                        color: "rgba(255,0,0,0.7)",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      CLOSED
+                    </Text>
+                  );
+                }
+              };
               return (
                 <TouchableHighlight
                   key={key}
@@ -617,7 +720,10 @@ const MapLayout = () => {
                     setCarParkTitle(element.name);
                   }}
                 >
-                  <Text>{element.name}</Text>
+                  <View style={styles.choiceWrapper}>
+                    <Text style={styles.parkingChoices}>{element.name}</Text>
+                    {isOpen()}
+                  </View>
                 </TouchableHighlight>
               );
             })}
@@ -646,11 +752,18 @@ const MapLayout = () => {
         <View style={styles.infocontainer}>
           <Text style={styles.modaltextheader}>Information</Text>
           <View style={styles.modalchoicescontainer}>
-            <View style={{ padding: 20 }}>
-              <Text>เวลาทำการ จ-ศ 05.00 - 22.00 น.</Text>
-              <Text>กฎการจอด</Text>
-              <Text>
-                สติ้กเกอร์ สีแดง : บุคลากร สีเหลือง : นักศึกษา
+            <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                เวลาทำการ:
+              </Text>
+              <Text style={{ fontSize: 16 }}>
+                จันทร์ - ศุกร์ (05.00 - 22.00 น.)
+              </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 10 }}>
+                กฎการจอด:
+              </Text>
+              <Text style={{ fontSize: 16 }}>
+                สติ้กเกอร์ สีแดง : บุคลากร {"\n"}สีเหลือง : นักศึกษา{"\n"}
                 บุคคลภายนอกไม่ให้จอด ถ้ามาจอดโดยไม่มีสติ๊กเกอร์
                 จะโดนจดเลขทะเบียน + ตักเตือน - ถ้าตักเตือน 3 ครั้งโดนล็อคล้อ +
                 ปรับ 400 บาท
@@ -667,6 +780,9 @@ const MapLayout = () => {
         showsUserLocation={true}
         ref={(map) => (mapRef = map)}
         mapType={"hybrid"}
+        showsCompass={false}
+        pitchEnabled={false}
+        showsMyLocationButton={false}
       >
         {DrawParkingSlot(id1xx)}
         {DrawParkingSlot(id2xx_1)}
